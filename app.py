@@ -3,15 +3,11 @@ import cv2
 
 app = Flask(__name__)
 
-camera = cv2.VideoCapture(0)  # เลือกกล้องตาม ID ของกล้อง
-
-@app.route('/')
-def index():
-    return render_template('index.html')
+camera = cv2.VideoCapture(0)  # ใช้ webcam ตัวแรกที่เจอ
 
 def gen_frames():
     while True:
-        success, frame = camera.read()
+        success, frame = camera.read()  # อ่าน frame จาก webcam
         if not success:
             break
         else:
@@ -22,7 +18,12 @@ def gen_frames():
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(gen_frames(),
+                    mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
